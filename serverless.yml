@@ -1,0 +1,63 @@
+service: test-api-serverless
+frameworkVersion: '2 || 3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: '20201221'
+  region: us-west-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource:
+        - arn:aws:dynamodb:us-west-1:097813792602:table/SettingsTable
+
+plugins:
+  - serverless-plugin-typescript
+
+functions:
+  addSetting:
+    handler: src/handler.addSetting
+    events:
+      - http:
+          path: /settings
+          method: post
+  fetchSettings:
+    handler: src/handler.fetchSettings
+    events:
+      - http:
+          path: /settings
+          method: get
+  fetchSetting:
+    handler: src/handler.fetchSetting
+    events:
+      - http:
+          path: /settings/{id}
+          method: get
+  updateSetting:
+    handler: src/handler.updateSetting
+    events:
+      - http:
+          path: /settings/{id}
+          method: patch
+  deleteSetting:
+    handler: src/handler.deleteSetting
+    events:
+      - http:
+          path: /settings/{id}
+          method: delete
+
+resources:
+  Resources:
+    SettingsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Settings
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
