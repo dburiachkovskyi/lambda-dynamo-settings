@@ -1,3 +1,5 @@
+org: dburiachkovskyi
+app: test-serverless
 service: test-api-serverless
 frameworkVersion: '2 || 3'
 
